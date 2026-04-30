@@ -5,7 +5,7 @@ import { analyzeProductImage } from '../services/aiService';
 import { supabaseMock } from '../lib/supabase';
 import type { ProductData } from '../types/product';
 
-export default function PreviewPage() {
+function PreviewPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as { imageBase64: string, imagePreview: string };
@@ -173,3 +173,5 @@ export default function PreviewPage() {
     </div>
   );
 }
+
+export default PreviewPage;

@@ -54,7 +54,7 @@ export default function CapturePage() {
             </div>
             <div>
               <h3 style={{ marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>拍摄产品照片</h3>
-              <p style={{ fontSize: '0.875rem' }}>请将产品与 10cm 正方体参照物一起拍摄</p>
+              <p style={{ fontSize: '0.875rem' }}>请将产品与<strong style={{ color: 'var(--color-primary)' }}>标准烟盒</strong>参照物一起拍摄</p>
             </div>
           </div>
         )}
@@ -69,12 +69,36 @@ export default function CapturePage() {
         style={{ display: 'none' }} 
       />
 
+      {/* 功能介绍模块 */}
+      {!imagePreview && (
+        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Sparkles size={16} color="var(--color-primary)" />
+            核心功能介绍
+          </h4>
+          <div style={{ display: 'grid', gap: '0.5rem' }}>
+            <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.6rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ background: 'var(--color-primary)', color: 'white', width: '18px', height: '18px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>1</span>
+              <span>创新型<strong>“参照物”</strong>尺寸测算</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.6rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ background: 'var(--color-primary)', color: 'white', width: '18px', height: '18px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>2</span>
+              <span>智能<strong>多语种</strong>卖点自动生成</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.6rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ background: 'var(--color-primary)', color: 'white', width: '18px', height: '18px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>3</span>
+              <span>批量管理一键导出<strong>MDS格式</strong></span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
         {!imagePreview ? (
           <>
-            <button className="btn btn-primary" onClick={() => fileInputRef.current?.click()} style={{ width: '100%', padding: '1rem' }}>
+            <button className="btn btn-primary" onClick={() => fileInputRef.current?.click()} style={{ width: '100%', padding: '1rem', fontSize: '1.05rem' }}>
               <Camera size={20} />
-              拍照采集
+              开始拍照采集
             </button>
             <button className="btn btn-secondary" onClick={() => {
               if (fileInputRef.current) {
