@@ -54,5 +54,37 @@ export const supabaseMock = {
       .getPublicUrl(filePath);
 
     return data.publicUrl;
+  },
+
+  deleteProduct: async (id: string, imageUrl: string): Promise<void> => {
+    // 1. 从数据库删除
+    const { error: dbError } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (dbError) {
+      console.error('Error deleting product from DB:', dbError);
+      throw dbError;
+    }
+
+    // 2. 如果有图片，从存储桶删除
+    if (imageUrl && imageUrl.includes('product-images')) {
+      try {
+        // 从 URL 提取文件名 (e.g., .../product-images/filename.jpg)
+        const fileName = imageUrl.split('/').pop();
+        if (fileName) {
+          const { error: storageError } = await supabase.storage
+            .from('product-images')
+            .remove([fileName]);
+          
+          if (storageError) {
+            console.warn('Failed to delete image from storage:', storageError);
+          }
+        }
+      } catch (e) {
+        console.warn('Error parsing image URL for deletion:', e);
+      }
+    }
   }
 };

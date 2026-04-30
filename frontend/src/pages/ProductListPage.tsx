@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download, Camera, Loader2 } from 'lucide-react';
+import { Download, Camera, Loader2, Trash2 } from 'lucide-react';
 import { supabaseMock } from '../lib/supabase';
 import type { ProductData } from '../types/product';
 import { exportToExcel } from '../services/excelService';
@@ -10,19 +10,22 @@ export default function ProductListPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
 
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await supabaseMock.getProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await supabaseMock.getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
 
@@ -49,7 +52,33 @@ export default function ProductListPage() {
     }
   };
 
-  if (loading) {
+  const handleDelete = async () => {
+    if (selectedIds.size === 0) return;
+    
+    const confirmDelete = window.confirm(`确定要删除选中的 ${selectedIds.size} 个产品吗？这将同时删除云端存储的图片且不可恢复。`);
+    if (!confirmDelete) return;
+
+    setDeleting(true);
+    try {
+      const idsToDelete = Array.from(selectedIds);
+      for (const id of idsToDelete) {
+        const product = products.find(p => p.id === id);
+        if (product) {
+          await supabaseMock.deleteProduct(id, product.image_url);
+        }
+      }
+      setSelectedIds(new Set());
+      await fetchProducts(); // 重新加载列表
+      alert("删除成功");
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("部分产品删除失败");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  if (loading && products.length === 0) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--color-primary)' }}>
         <Loader2 size={32} className="lucide-spin" style={{ animation: 'spin 2s linear infinite' }} />
@@ -72,7 +101,7 @@ export default function ProductListPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingBottom: '5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '1.25rem', color: 'var(--color-text-primary)', margin: 0 }}>我的采集</h2>
+        <h2 style={{ fontSize: '1.25rem', color: 'var(--color-text-primary)', margin: 0 }}>我的采集 ({products.length})</h2>
         <button 
           style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: '0.875rem', cursor: 'pointer' }}
           onClick={() => {
@@ -99,9 +128,10 @@ export default function ProductListPage() {
               cursor: 'pointer',
               borderWidth: '2px',
               borderColor: selectedIds.has(product.id) ? 'var(--color-primary)' : 'transparent',
-              transition: 'border-color 0.2s ease'
+              transition: 'all 0.2s ease',
+              opacity: deleting && selectedIds.has(product.id) ? 0.5 : 1
             }}
-            onClick={() => toggleSelect(product.id)}
+            onClick={() => !deleting && toggleSelect(product.id)}
           >
             <img 
               src={product.image_url} 
@@ -138,13 +168,33 @@ export default function ProductListPage() {
         ))}
       </div>
 
-      {/* Bottom Export Bar */}
-      <div className="glass-panel" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '1rem', display: 'flex', borderTop: '1px solid var(--color-border)', maxWidth: '500px', margin: '0 auto' }}>
+      {/* Bottom Export/Delete Bar */}
+      <div className="glass-panel" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '1rem', display: 'flex', gap: '0.75rem', borderTop: '1px solid var(--color-border)', maxWidth: '500px', margin: '0 auto', zIndex: 100 }}>
+        <button 
+          className="btn" 
+          onClick={handleDelete}
+          disabled={selectedIds.size === 0 || deleting || exporting}
+          style={{ 
+            flex: 1, 
+            background: 'var(--color-error-light, #fee2e2)', 
+            color: 'var(--color-error, #ef4444)',
+            border: '1px solid var(--color-error, #ef4444)',
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            gap: '0.4rem',
+            padding: '0.75rem'
+          }}
+        >
+          {deleting ? <Loader2 className="lucide-spin" size={18} style={{ animation: 'spin 2s linear infinite' }} /> : <Trash2 size={18} />}
+          <span>删除</span>
+        </button>
+        
         <button 
           className="btn btn-primary" 
           onClick={handleExport} 
-          disabled={selectedIds.size === 0 || exporting} 
-          style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+          disabled={selectedIds.size === 0 || exporting || deleting} 
+          style={{ flex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
         >
           {exporting ? <Loader2 className="lucide-spin" size={20} style={{ animation: 'spin 2s linear infinite' }} /> : <Download size={20} />}
           {exporting ? '导出中...' : `导出选中 (${selectedIds.size})`}

@@ -54,7 +54,7 @@ export default function CapturePage() {
             </div>
             <div>
               <h3 style={{ marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>拍摄产品照片</h3>
-              <p style={{ fontSize: '0.875rem' }}>请将产品与<strong style={{ color: 'var(--color-primary)' }}>标准烟盒</strong>参照物一起拍摄</p>
+              <p style={{ fontSize: '0.875rem' }}>请将产品与<strong style={{ color: 'var(--color-primary)' }}>10cm 立方体</strong>参照物一起拍摄</p>
             </div>
           </div>
         )}
