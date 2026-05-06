@@ -31,6 +31,7 @@ alter table public.products enable row level security;
 create policy "Allow public read access" on public.products for select using (true);
 create policy "Allow public insert access" on public.products for insert with check (true);
 create policy "Allow public update access" on public.products for update using (true);
+create policy "Allow public delete access" on public.products for delete using (true);
 
 -- 2. Create the storage bucket for product images
 insert into storage.buckets (id, name, public) values ('product-images', 'product-images', true)
@@ -39,3 +40,4 @@ on conflict (id) do nothing;
 -- Set up storage policies
 create policy "Public Access" on storage.objects for select using ( bucket_id = 'product-images' );
 create policy "Public Insert" on storage.objects for insert with check ( bucket_id = 'product-images' );
+create policy "Public Delete" on storage.objects for delete using ( bucket_id = 'product-images' );
