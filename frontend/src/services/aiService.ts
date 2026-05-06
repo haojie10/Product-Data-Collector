@@ -25,6 +25,7 @@ export const analyzeProductImage = async (imageBase64: string): Promise<Partial<
   "length_cm": 估算的长度(数字),
   "width_cm": 估算的宽度(数字),
   "height_cm": 估算的高度(数字),
+  "net_weight_g": 估算的净重(数字，单位克),
   "material": "产品的主要材质(如：塑料/ABS/金属等)",
   "selling_points_zh": ["中文卖点1", "中文卖点2", "中文卖点3"],
   "selling_points_en": ["English selling point 1", "English selling point 2", "English selling point 3"],
@@ -32,8 +33,9 @@ export const analyzeProductImage = async (imageBase64: string): Promise<Partial<
 }
 注意：
 1. 长度、宽度、高度单位为厘米（cm），请务必进行纯视觉尺寸估算。如果不确定，请给出最合理的常识估值。
-2. selling_points_zh 必须包含 3 个数组元素，简明扼要，突出商业卖点。
-3. 返回的结果必须是纯 JSON，不需要Markdown代码块标记。
+2. 净重单位为克(g)，请根据产品材质和尺寸进行合理估算。
+3. selling_points_zh 必须包含 3 个数组元素，简明扼要，突出商业卖点。
+4. 返回的结果必须是纯 JSON，不需要Markdown代码块标记。
 `;
 
   const payload = {

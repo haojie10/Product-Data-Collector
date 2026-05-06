@@ -224,7 +224,7 @@ function PreviewPage() {
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-primary-dark)', fontWeight: 'bold', marginBottom: '0.25rem' }}>净重 (克) *手动输入*</label>
+          <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-primary-dark)', fontWeight: 'bold', marginBottom: '0.25rem' }}>净重 (克) 🤖</label>
           <input type="number" className="input-field" placeholder="例如：350" value={product.net_weight_g || ''} onChange={e => setProduct({...product, net_weight_g: Number(e.target.value)})} style={{ borderColor: 'var(--color-primary-dark)', borderWidth: '2px' }} />
         </div>
       </div>
