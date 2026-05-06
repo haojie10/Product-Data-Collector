@@ -110,8 +110,10 @@ function PreviewPage() {
         }
       }
 
-      if (prev.net_weight_g !== undefined && prev.net_weight_g !== null) {
-        const expectedWeight = Number(((prev.net_weight_g * 55) / 1000).toFixed(2));
+      // 3. 计算外箱重量
+      const currentQty = updates.outer_box_qty !== undefined ? updates.outer_box_qty : prev.outer_box_qty;
+      if (prev.net_weight_g !== undefined && prev.net_weight_g !== null && currentQty) {
+        const expectedWeight = Number(((currentQty * prev.net_weight_g * 1.05) / 1000).toFixed(2));
         if (prev.outer_box_weight !== expectedWeight) {
           updates.outer_box_weight = expectedWeight;
           changed = true;
