@@ -36,6 +36,51 @@ function PreviewPage() {
     runAnalysis();
   }, [state, navigate]);
 
+  // 包装信息联动逻辑
+  useEffect(() => {
+    setProduct(prev => {
+      const updates: Partial<ProductData> = {};
+      let changed = false;
+
+      // 默认值初始化
+      if (prev.pack_method === undefined) { updates.pack_method = 'CB'; changed = true; }
+      if (prev.pack_qty === undefined) { updates.pack_qty = 1; changed = true; }
+      if (prev.outer_box_qty === undefined) { updates.outer_box_qty = 50; changed = true; }
+
+      // 自动计算，仅在值有效时计算并保留1位或2位小数
+      if (prev.height_cm !== undefined) {
+        const expectedLen = Number((prev.height_cm * 5.3).toFixed(1));
+        if (prev.outer_box_length !== expectedLen) {
+          updates.outer_box_length = expectedLen;
+          changed = true;
+        }
+      }
+      if (prev.width_cm !== undefined) {
+        const expectedWidth = Number((prev.width_cm * 5.3).toFixed(1));
+        if (prev.outer_box_width !== expectedWidth) {
+          updates.outer_box_width = expectedWidth;
+          changed = true;
+        }
+      }
+      if (prev.length_cm !== undefined) {
+        const expectedHeight = Number((prev.length_cm * 2.1).toFixed(1));
+        if (prev.outer_box_height !== expectedHeight) {
+          updates.outer_box_height = expectedHeight;
+          changed = true;
+        }
+      }
+      if (prev.net_weight_g !== undefined && prev.net_weight_g !== null) {
+        const expectedWeight = Number(((prev.net_weight_g * 55) / 1000).toFixed(2));
+        if (prev.outer_box_weight !== expectedWeight) {
+          updates.outer_box_weight = expectedWeight;
+          changed = true;
+        }
+      }
+
+      return changed ? { ...prev, ...updates } : prev;
+    });
+  }, [product.length_cm, product.width_cm, product.height_cm, product.net_weight_g]);
+
   // Helper to convert base64 to File
   const dataURLtoFile = (dataurl: string, filename: string) => {
     const arr = dataurl.split(',');
@@ -138,6 +183,45 @@ function PreviewPage() {
         <div>
           <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-primary-dark)', fontWeight: 'bold', marginBottom: '0.25rem' }}>净重 (克) *手动输入*</label>
           <input type="number" className="input-field" placeholder="例如：350" value={product.net_weight_g || ''} onChange={e => setProduct({...product, net_weight_g: Number(e.target.value)})} style={{ borderColor: 'var(--color-primary-dark)', borderWidth: '2px' }} />
+        </div>
+      </div>
+
+      {/* Packaging Info */}
+      <div className="card">
+        <h3 style={{ marginBottom: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>包装信息</h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>包装方式</label>
+            <input type="text" className="input-field" value={product.pack_method || ''} onChange={e => setProduct({...product, pack_method: e.target.value})} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>包装数量</label>
+            <input type="number" className="input-field" value={product.pack_qty || ''} onChange={e => setProduct({...product, pack_qty: Number(e.target.value)})} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>外箱装量</label>
+            <input type="number" className="input-field" value={product.outer_box_qty || ''} onChange={e => setProduct({...product, outer_box_qty: Number(e.target.value)})} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>外箱重量 (kg)</label>
+            <input type="number" className="input-field" value={product.outer_box_weight || ''} onChange={e => setProduct({...product, outer_box_weight: Number(e.target.value)})} />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>外箱长 (cm)</label>
+            <input type="number" className="input-field" value={product.outer_box_length || ''} onChange={e => setProduct({...product, outer_box_length: Number(e.target.value)})} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>外箱宽 (cm)</label>
+            <input type="number" className="input-field" value={product.outer_box_width || ''} onChange={e => setProduct({...product, outer_box_width: Number(e.target.value)})} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>外箱高 (cm)</label>
+            <input type="number" className="input-field" value={product.outer_box_height || ''} onChange={e => setProduct({...product, outer_box_height: Number(e.target.value)})} />
+          </div>
         </div>
       </div>
 

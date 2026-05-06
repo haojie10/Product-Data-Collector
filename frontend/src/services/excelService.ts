@@ -46,6 +46,15 @@ export const exportToExcel = async (products: ProductData[]) => {
       const extraDesc = `\n净重：${product.net_weight_g || 0}g\n材质：${product.material}`;
       row.getCell('AN').value = (row.getCell('AN').value?.toString() || '') + extraDesc;
 
+      // Map packaging info (AP to AV)
+      row.getCell('AP').value = product.pack_method || 'CB';
+      row.getCell('AQ').value = product.pack_qty || 1;
+      row.getCell('AR').value = product.outer_box_qty || 50;
+      row.getCell('AS').value = product.outer_box_weight || '';
+      row.getCell('AT').value = product.outer_box_length || '';
+      row.getCell('AU').value = product.outer_box_width || '';
+      row.getCell('AV').value = product.outer_box_height || '';
+
       // Handle Image
       if (product.image_url) {
         try {

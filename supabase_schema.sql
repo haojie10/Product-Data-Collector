@@ -14,6 +14,13 @@ create table public.products (
   selling_points_zh text[],
   selling_points_en text[],
   spec_description text,
+  pack_method text,
+  pack_qty numeric,
+  outer_box_qty numeric,
+  outer_box_weight numeric,
+  outer_box_length numeric,
+  outer_box_width numeric,
+  outer_box_height numeric,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
