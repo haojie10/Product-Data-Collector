@@ -47,28 +47,69 @@ function PreviewPage() {
       if (prev.pack_qty === undefined) { updates.pack_qty = 1; changed = true; }
       if (prev.outer_box_qty === undefined) { updates.outer_box_qty = 50; changed = true; }
 
-      // 自动计算，仅在值有效时计算并保留1位或2位小数
-      if (prev.height_cm !== undefined) {
-        const expectedLen = Number((prev.height_cm * 5.3).toFixed(1));
+      // 自动计算逻辑
+      if (prev.length_cm && prev.width_cm && prev.height_cm) {
+        // 计算产品体积（立方分米, dm³）
+        // 1 dm³ = 1000 cm³
+        const volumeDm3 = (prev.length_cm * prev.width_cm * prev.height_cm) / 1000;
+        
+        // 1. 计算装量
+        let qty = 50;
+        if (volumeDm3 <= 0.33) {
+          qty = 100;
+        } else if (volumeDm3 <= 0.66) {
+          qty = 50;
+        } else if (volumeDm3 <= 1.0) {
+          qty = 24;
+        } else {
+          qty = 12;
+        }
+
+        if (prev.outer_box_qty !== qty) {
+          updates.outer_box_qty = qty;
+          changed = true;
+        }
+
+        // 2. 计算外箱尺寸
+        let d1 = 0, d2 = 0, d3 = 0;
+        if (qty === 100) {
+          d1 = prev.height_cm * 4.1;
+          d2 = prev.length_cm * 5.1;
+          d3 = prev.width_cm * 5.1;
+        } else if (qty === 50) {
+          d1 = prev.height_cm * 2.1;
+          d2 = prev.length_cm * 5.1;
+          d3 = prev.width_cm * 5.1;
+        } else if (qty === 24) {
+          d1 = prev.height_cm * 2.1;
+          d2 = prev.length_cm * 3.1;
+          d3 = prev.width_cm * 4.1;
+        } else if (qty === 12) {
+          d1 = prev.height_cm * 2.1;
+          d2 = prev.length_cm * 2.1;
+          d3 = prev.width_cm * 3.1;
+        }
+
+        // 排序，获取最大（长）、中间（宽）、最小（高）
+        const sortedDims = [d1, d2, d3].sort((a, b) => b - a); // 降序
+        const expectedLen = Number(sortedDims[0].toFixed(1));
+        const expectedWidth = Number(sortedDims[1].toFixed(1));
+        const expectedHeight = Number(sortedDims[2].toFixed(1));
+
         if (prev.outer_box_length !== expectedLen) {
           updates.outer_box_length = expectedLen;
           changed = true;
         }
-      }
-      if (prev.width_cm !== undefined) {
-        const expectedWidth = Number((prev.width_cm * 5.3).toFixed(1));
         if (prev.outer_box_width !== expectedWidth) {
           updates.outer_box_width = expectedWidth;
           changed = true;
         }
-      }
-      if (prev.length_cm !== undefined) {
-        const expectedHeight = Number((prev.length_cm * 2.1).toFixed(1));
         if (prev.outer_box_height !== expectedHeight) {
           updates.outer_box_height = expectedHeight;
           changed = true;
         }
       }
+
       if (prev.net_weight_g !== undefined && prev.net_weight_g !== null) {
         const expectedWeight = Number(((prev.net_weight_g * 55) / 1000).toFixed(2));
         if (prev.outer_box_weight !== expectedWeight) {
