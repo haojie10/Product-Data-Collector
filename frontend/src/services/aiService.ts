@@ -15,9 +15,8 @@ export const analyzeProductImage = async (imageBase64: string): Promise<Partial<
   const systemPrompt = `
 你是一个专业的产品信息采集AI。用户将给你一张产品图片，你需要分析这张图片并提取出产品信息。
 
-【重要尺寸参照说明】
-图片中会放置一个作为尺寸参照物的 10cm 立方体（长10cm，宽10cm，高10cm）。
-请你务必根据画面中产品与该 10cm 立方体的比例关系，精确估算出产品的长、宽、高。
+【重要尺寸估算说明】
+请你务必根据画面中产品在纯视觉上的结构特点、常见同类产品的尺寸常识，精确估算出产品的长、宽、高。
 
 请必须使用 JSON 格式返回分析结果，格式如下：
 {
@@ -32,7 +31,7 @@ export const analyzeProductImage = async (imageBase64: string): Promise<Partial<
   "spec_description": "一段关于产品的简短规格描述(中文)"
 }
 注意：
-1. 长度、宽度、高度单位为厘米（cm），请务必以上述提到的【10cm 立方体】作为参照物进行比例换算。如果不确定，请给出最合理的估值。
+1. 长度、宽度、高度单位为厘米（cm），请务必进行纯视觉尺寸估算。如果不确定，请给出最合理的常识估值。
 2. selling_points_zh 必须包含 3 个数组元素，简明扼要，突出商业卖点。
 3. 返回的结果必须是纯 JSON，不需要Markdown代码块标记。
 `;

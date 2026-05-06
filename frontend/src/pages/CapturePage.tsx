@@ -54,7 +54,6 @@ export default function CapturePage() {
             </div>
             <div>
               <h3 style={{ marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>拍摄产品照片</h3>
-              <p style={{ fontSize: '0.875rem' }}>请将产品与<strong style={{ color: 'var(--color-primary)' }}>10cm 立方体</strong>参照物一起拍摄</p>
             </div>
           </div>
         )}
@@ -79,7 +78,7 @@ export default function CapturePage() {
           <div style={{ display: 'grid', gap: '0.5rem' }}>
             <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.6rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ background: 'var(--color-primary)', color: 'white', width: '18px', height: '18px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>1</span>
-              <span>创新型<strong>“参照物”</strong>尺寸测算</span>
+              <span>创新型<strong>纯视觉</strong>尺寸测算</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.6rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ background: 'var(--color-primary)', color: 'white', width: '18px', height: '18px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>2</span>
