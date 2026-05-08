@@ -12,6 +12,7 @@ export interface ProductData {
   selling_points_zh: string[];
   selling_points_en: string[];
   spec_description: string;
+  spec_description_en: string;
   pack_method?: string;
   pack_qty?: number;
   outer_box_qty?: number;

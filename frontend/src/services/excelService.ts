@@ -40,11 +40,7 @@ export const exportToExcel = async (products: ProductData[]) => {
       row.getCell('V').value = product.selling_points_en[2] || '';
       
       row.getCell('AN').value = product.spec_description || '';
-      row.getCell('AO').value = product.title_en ? `${product.title_en}. Material: ${product.material}. Size: ${product.length_cm}x${product.width_cm}x${product.height_cm}cm` : '';
-      
-      // We will append net weight and material to the spec description
-      const extraDesc = `\n净重：${product.net_weight_g || 0}g\n材质：${product.material}`;
-      row.getCell('AN').value = (row.getCell('AN').value?.toString() || '') + extraDesc;
+      row.getCell('AO').value = product.spec_description_en || '';
 
       // Map packaging info (AP to AV)
       row.getCell('AP').value = product.pack_method || 'CB';

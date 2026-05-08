@@ -283,7 +283,14 @@ function PreviewPage() {
       {/* Spec Description */}
       <div className="card">
         <h3 style={{ marginBottom: '0.5rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>给供应商的描述 🤖</h3>
-        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>{product.spec_description}</p>
+        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '1rem' }}>
+          <strong>🇨🇳 中文规格描述：</strong><br />
+          {product.spec_description}
+        </p>
+        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+          <strong>🇬🇧 英文规格描述：</strong><br />
+          {product.spec_description_en}
+        </p>
       </div>
 
       {/* Fixed Bottom Action Bar */}

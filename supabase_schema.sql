@@ -14,6 +14,7 @@ create table public.products (
   selling_points_zh text[],
   selling_points_en text[],
   spec_description text,
+  spec_description_en text,
   pack_method text,
   pack_qty numeric,
   outer_box_qty numeric,
