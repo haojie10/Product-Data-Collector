@@ -197,8 +197,8 @@ function PreviewPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingBottom: '5rem' }}>
       {/* Image Preview */}
-      <div className="card" style={{ padding: '0.5rem', display: 'flex', justifyContent: 'center', background: '#e2e8f0' }}>
-        <img src={state.imagePreview} alt="Product" style={{ maxHeight: '200px', objectFit: 'contain', borderRadius: 'var(--radius-sm)' }} />
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '0.5rem 0' }}>
+        <img src={state.imagePreview} alt="Product" style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover', borderRadius: 'var(--radius-lg)', maxWidth: '320px', boxShadow: 'var(--shadow-lg)' }} />
       </div>
 
       {/* Supplier Name */}

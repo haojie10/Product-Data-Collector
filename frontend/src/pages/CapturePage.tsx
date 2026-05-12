@@ -8,20 +8,48 @@ export default function CapturePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const processImageToSquare = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const size = 1024; // 统一输出 1024x1024
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            resolve(e.target?.result as string);
+            return;
+          }
+
+          // 计算中心裁剪区域
+          const minDim = Math.min(img.width, img.height);
+          const sx = (img.width - minDim) / 2;
+          const sy = (img.height - minDim) / 2;
+
+          // 绘制到 canvas
+          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+          
+          // 转换为 jpeg 压缩体积，质量设为 0.85
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Create preview URL
-    const url = URL.createObjectURL(file);
-    setImagePreview(url);
-
-    // Convert to Base64 for AI processing
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImageBase64(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    // 开始处理图片（裁剪为 1:1）
+    const processedBase64 = await processImageToSquare(file);
+    setImagePreview(processedBase64);
+    setImageBase64(processedBase64);
   };
 
   const handleAnalyze = () => {
@@ -35,25 +63,39 @@ export default function CapturePage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: '100%' }}>
       
-      <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', borderStyle: imagePreview ? 'solid' : 'dashed', borderWidth: '2px', borderColor: imagePreview ? 'var(--color-border)' : 'var(--color-primary-light)', overflow: 'hidden', padding: imagePreview ? 0 : 'var(--spacing-4)' }}>
+      <div className="card" style={{ 
+        width: '100%', 
+        aspectRatio: '1/1', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        borderStyle: imagePreview ? 'solid' : 'dashed', 
+        borderWidth: '2px', 
+        borderColor: imagePreview ? 'var(--color-border)' : 'var(--color-primary-light)', 
+        overflow: 'hidden', 
+        padding: 0,
+        margin: 0
+      }}>
         
         {imagePreview ? (
           <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-            <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <button 
               onClick={() => { setImagePreview(null); setImageBase64(null); if(fileInputRef.current) fileInputRef.current.value = ''; }}
-              style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
             >
               ✕
             </button>
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ background: 'var(--color-primary-light)', padding: '1rem', borderRadius: '50%' }}>
+            <div style={{ background: 'var(--color-primary-light)', padding: '1.5rem', borderRadius: '50%' }}>
               <Camera size={48} color="var(--color-primary)" />
             </div>
             <div>
               <h3 style={{ marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>拍摄产品照片</h3>
+              <p style={{ fontSize: '0.85rem' }}>自动裁剪为 1:1 正方形</p>
             </div>
           </div>
         )}
