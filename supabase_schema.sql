@@ -22,6 +22,7 @@ create table public.products (
   outer_box_length numeric,
   outer_box_width numeric,
   outer_box_height numeric,
+  supplier_name text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

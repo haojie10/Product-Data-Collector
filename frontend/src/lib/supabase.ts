@@ -36,13 +36,13 @@ export const supabaseMock = {
   },
   
   uploadImage: async (file: File): Promise<string> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const fileExt = file.name.split('.').pop() || 'jpg';
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    const filePath = fileName;
 
     const { error: uploadError } = await supabase.storage
       .from('product-images')
-      .upload(filePath, file);
+      .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError);

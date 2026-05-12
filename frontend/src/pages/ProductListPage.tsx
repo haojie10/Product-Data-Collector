@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Download, Camera, Loader2, Trash2 } from 'lucide-react';
+import { Download, Camera, Loader2, Trash2, ImageOff } from 'lucide-react';
 import { supabaseMock } from '../lib/supabase';
 import type { ProductData } from '../types/product';
 import { exportToExcel } from '../services/excelService';
@@ -133,11 +133,27 @@ export default function ProductListPage() {
             }}
             onClick={() => !deleting && toggleSelect(product.id)}
           >
-            <img 
-              src={product.image_url} 
-              alt="Product" 
-              style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} 
-            />
+            <div style={{ width: '80px', height: '80px', flexShrink: 0, background: 'var(--color-bg-base)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+              {product.image_url ? (
+                <img 
+                  src={product.image_url} 
+                  alt={product.title_zh || 'Product'} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    const parent = (e.target as HTMLImageElement).parentElement;
+                    if (parent) {
+                      const icon = document.createElement('div');
+                      icon.style.color = 'var(--color-text-tertiary)';
+                      icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-off"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.82-2.82"/><path d="M16 16H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><path d="M21 15V7a2 2 0 0 0-2-2H11"/><path d="m2 16 4.5-4.5"/><path d="m22 16-3-3"/></svg>';
+                      parent.appendChild(icon);
+                    }
+                  }}
+                />
+              ) : (
+                <ImageOff size={24} color="var(--color-text-tertiary)" />
+              )}
+            </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '0.95rem', color: 'var(--color-text-primary)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {product.title_zh || '未命名产品'}

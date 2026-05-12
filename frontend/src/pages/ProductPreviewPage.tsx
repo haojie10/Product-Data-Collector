@@ -140,6 +140,7 @@ function PreviewPage() {
   };
 
   const handleSave = async () => {
+    if (saving) return;
     if (!product.net_weight_g) {
       alert("请填写产品净重");
       return;
@@ -198,6 +199,18 @@ function PreviewPage() {
       {/* Image Preview */}
       <div className="card" style={{ padding: '0.5rem', display: 'flex', justifyContent: 'center', background: '#e2e8f0' }}>
         <img src={state.imagePreview} alt="Product" style={{ maxHeight: '200px', objectFit: 'contain', borderRadius: 'var(--radius-sm)' }} />
+      </div>
+
+      {/* Supplier Name */}
+      <div className="card">
+        <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>供应商名称 (选填)</label>
+        <input 
+          type="text" 
+          className="input-field" 
+          placeholder="请输入供应商名称" 
+          value={product.supplier_name || ''} 
+          onChange={e => setProduct({...product, supplier_name: e.target.value})} 
+        />
       </div>
 
       {/* Dimensions & Weight */}

@@ -20,5 +20,6 @@ export interface ProductData {
   outer_box_length?: number;
   outer_box_width?: number;
   outer_box_height?: number;
+  supplier_name?: string;
   created_at: string;
 }

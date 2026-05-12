@@ -50,6 +50,7 @@ export const exportToExcel = async (products: ProductData[]) => {
       row.getCell('AT').value = product.outer_box_length || '';
       row.getCell('AU').value = product.outer_box_width || '';
       row.getCell('AV').value = product.outer_box_height || '';
+      row.getCell('BA').value = product.supplier_name || '';
 
       // Handle Image
       if (product.image_url) {
